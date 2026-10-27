@@ -3,6 +3,7 @@ from langchain_core.messages import HumanMessage
 from langchain.tools import tool
 from langchain.agents import create_agent
 from dotenv import load_dotenv
+from tools import log_exercise
 
 load_dotenv()
 
@@ -12,7 +13,7 @@ def main():
         temperature=0
         )
 
-    tools = []
+    tools = [log_exercise]
 
     messages = []
     agent = create_agent(llm, tools)
@@ -37,7 +38,6 @@ def main():
                 for message in chunk["tools"]["messages"]:
                     messages.append(message)
         print()
-
 
 
 
