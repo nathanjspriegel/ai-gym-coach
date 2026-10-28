@@ -1,9 +1,8 @@
 from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
-from langchain.tools import tool
 from langchain.agents import create_agent
 from dotenv import load_dotenv
-from tools import log_exercise
+from tools import log_exercise, get_exercise_names
 
 load_dotenv()
 
@@ -13,10 +12,23 @@ def main():
         temperature=0
         )
 
-    tools = [log_exercise]
+    tools = [
+        log_exercise,
+        get_exercise_names
+    ]
 
     messages = []
-    agent = create_agent(llm, tools)
+    agent = create_agent(
+        llm, 
+        tools,
+        system_prompt=(
+            "You are a gym coach that logs workouts. "
+            "Before logging any set, always call get_exercise_names first. " 
+            "If the exercise name matches an existing name, like 'bench' matching 'Barbell Bench Press', "
+            "then use the exact existing name."
+        ),
+
+    )
 
     print("Hi! I'm your AI gym coach. How can I help you?")
     print("Type 'quit' to exit.")
