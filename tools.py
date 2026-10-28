@@ -52,7 +52,7 @@ def get_exercise_names() -> str:
 
 @tool
 def get_personal_record(name: str) -> str:
-    """Get the user's personal record (heaviest weight) for an exercise. Use the exact name from get_exercise_names."""
+    """Get the user's personal record for an exercise: the heaviest weight lifted, with the reps and date of that set. Use the exact name from get_exercise_names."""
     
     name = name.strip().title()
     
@@ -60,14 +60,17 @@ def get_personal_record(name: str) -> str:
     if not file_exists:
         return "No exercises logged yet."
     
-    df = pd.read_csv(FILE_PATH, usecols=['Exercise', 'Weight'])
+    df = pd.read_csv(FILE_PATH)
 
-    personal_record = df.loc[df['Exercise'] == name, 'Weight'].max()
+    exercise_rows = df[df['Exercise'] == name]
 
-    if pd.isna(personal_record):
-        return f"No personal record for {name} yet"
+    if exercise_rows.empty:
+        return f"No personal record for {name} yet."
 
-    return f"Your personal record for {name} is {personal_record} lbs"
+    pr_idx = exercise_rows['Weight'].idxmax()
+    pr_row = df.loc[pr_idx]
+
+    return f"Your personal record for {name} is {pr_row['Weight']} lbs for {pr_row['Reps']} reps on {pr_row['Date']}."
     
 
 
