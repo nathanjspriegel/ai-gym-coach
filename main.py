@@ -2,7 +2,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.messages import HumanMessage
 from langchain.agents import create_agent
 from dotenv import load_dotenv
-from tools import log_exercise, get_exercise_names
+from tools import log_exercise, get_exercise_names, get_personal_record
 
 load_dotenv()
 
@@ -14,7 +14,8 @@ def main():
 
     tools = [
         log_exercise,
-        get_exercise_names
+        get_exercise_names,
+        get_personal_record,
     ]
 
     messages = []

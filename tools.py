@@ -2,6 +2,7 @@ from langchain.tools import tool
 import csv
 from datetime import date
 import os 
+import pandas as pd
 
 FILE_PATH = "data/exercise_log.csv"
 
@@ -49,6 +50,25 @@ def get_exercise_names() -> str:
 
     return ", ".join(names)
 
+@tool
+def get_personal_record(name: str) -> str:
+    """Get the user's personal record (heaviest weight) for an exercise. Use the exact name from get_exercise_names."""
+    
+    name = name.strip().title()
+    
+    file_exists = os.path.exists(FILE_PATH)
+    if not file_exists:
+        return "No exercises logged yet."
+    
+    df = pd.read_csv(FILE_PATH, usecols=['Exercise', 'Weight'])
+
+    personal_record = df.loc[df['Exercise'] == name, 'Weight'].max()
+
+    if pd.isna(personal_record):
+        return f"No personal record for {name} yet"
+
+    return f"Your personal record for {name} is {personal_record} lbs"
+    
 
 
 
