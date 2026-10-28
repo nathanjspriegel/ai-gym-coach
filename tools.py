@@ -53,7 +53,7 @@ def get_exercise_names() -> str:
 @tool
 def get_personal_record(name: str) -> str:
     """Get the user's personal record for an exercise: the heaviest weight lifted, with the reps and date of that set. Use the exact name from get_exercise_names."""
-    
+
     name = name.strip().title()
     
     file_exists = os.path.exists(FILE_PATH)
@@ -71,7 +71,39 @@ def get_personal_record(name: str) -> str:
     pr_row = df.loc[pr_idx]
 
     return f"Your personal record for {name} is {pr_row['Weight']} lbs for {pr_row['Reps']} reps on {pr_row['Date']}."
+
+@tool
+def get_today() -> str:
+    """Get today's date and day of the week. Use this to determine dates such as 'yesterday' or 'last Friday'."""
     
+    today = date.today()
+    return today.strftime("%A, %Y-%m-%d")
+
+@tool
+def get_workout_history(day: str) -> str:
+    """Get each set with its weight and reps for every exercise done on a given day.
+    The date must be in YYYY-MM-DD format.
+    Use get_today to determine dates like 'yesterday' or 'last Friday'."""
+
+    file_exists = os.path.exists(FILE_PATH)
+    if not file_exists:
+        return "No exercises logged yet."
+
+    df = pd.read_csv(FILE_PATH)
+
+    exercise_rows = df[df['Date'] == day]
+    
+    if exercise_rows.empty:
+        return f"No workout logged on {day}."
+
+    day_log = []
+    for _, row in exercise_rows.iterrows():
+        day_log.append(f"{row['Exercise']}: {row['Weight']} lbs x {row['Reps']}")
+    
+    return "\n".join(day_log)
+
+
+
 
 
 
