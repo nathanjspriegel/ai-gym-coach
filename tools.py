@@ -116,18 +116,21 @@ def get_exercise_progress(name: str, days: int = 30) -> str:
         return "No exercises logged yet."
     
     df = pd.read_csv(FILE_PATH)
+    df['Date'] = pd.to_datetime(df['Date'])
 
-    exercise_rows = df[df['Exercise'] == name]
+    date_cutoff = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
+
+    exercise_rows = df[(df['Exercise'] == name) & (df['Date'] >= date_cutoff)]
     
     if exercise_rows.empty:
-        return f"No exercise logged for {name} yet."
+        return f"No {name} logged in the last {days} days."
 
     daily_best = exercise_rows.groupby('Date')['Weight'].max()
 
     log = []
 
     for day, weight in daily_best.items():
-        log.append(f"{day}: {weight} lbs")
+        log.append(f"{day.date()}: {weight} lbs")
 
     return "\n".join(log)
     
