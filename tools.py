@@ -52,7 +52,8 @@ def get_exercise_names() -> str:
 
 @tool
 def get_personal_record(name: str) -> str:
-    """Get the user's personal record for an exercise: the heaviest weight lifted, with the reps and date of that set. Use the exact name from get_exercise_names."""
+    """Get the user's personal record for an exercise: the heaviest weight lifted, with the reps and date of that set. 
+    Use the exact name from get_exercise_names."""
 
     name = name.strip().title()
     
@@ -74,7 +75,8 @@ def get_personal_record(name: str) -> str:
 
 @tool
 def get_today() -> str:
-    """Get today's date and day of the week. Use this to determine dates such as 'yesterday' or 'last Friday'."""
+    """Get today's date and day of the week. 
+    Use this to determine dates such as 'yesterday' or 'last Friday'."""
     
     today = date.today()
     return today.strftime("%A, %Y-%m-%d")
@@ -102,6 +104,33 @@ def get_workout_history(day: str) -> str:
     
     return "\n".join(day_log)
 
+@tool
+def get_exercise_progress(name: str, days: int = 30) -> str:
+    """Show progress for a given exercise over a given number of days (30 default). 
+    Use the exact name from get_exercise_names."""
+
+    name = name.strip().title()
+
+    file_exists = os.path.exists(FILE_PATH)
+    if not file_exists:
+        return "No exercises logged yet."
+    
+    df = pd.read_csv(FILE_PATH)
+
+    exercise_rows = df[df['Exercise'] == name]
+    
+    if exercise_rows.empty:
+        return f"No exercise logged for {name} yet."
+
+    daily_best = exercise_rows.groupby('Date')['Weight'].max()
+
+    log = []
+
+    for day, weight in daily_best.items():
+        log.append(f"{day}: {weight} lbs")
+
+    return "\n".join(log)
+    
 
 
 

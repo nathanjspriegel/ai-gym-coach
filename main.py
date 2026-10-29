@@ -8,6 +8,7 @@ from tools import (
     get_personal_record, 
     get_today, 
     get_workout_history,
+    get_exercise_progress,
 )
 
 load_dotenv()
@@ -24,6 +25,7 @@ def main():
         get_personal_record,
         get_today,
         get_workout_history,
+        get_exercise_progress,
     ]
 
     messages = []
