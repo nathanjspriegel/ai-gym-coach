@@ -41,7 +41,6 @@ def get_exercise_names() -> str:
     
     with open(FILE_PATH, mode='r', newline='', encoding='utf-8') as file:
         
-        
         names = set()
     
         reader = csv.DictReader(file)
