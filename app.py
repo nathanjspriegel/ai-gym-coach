@@ -1,10 +1,17 @@
 import streamlit as st
 import pandas as pd
+from agent import get_agent
 
 FILE_PATH = "data/exercise_log.csv"
 
 st.title("AI Gym Coach")
 st.write("Choose exercise from the dropdown to view progress")
+
+if "agent" not in st.session_state:
+    st.session_state.agent = get_agent()
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
 df = pd.read_csv(FILE_PATH)
 df['Date'] = pd.to_datetime(df['Date'])
