@@ -12,9 +12,18 @@ df['Date'] = pd.to_datetime(df['Date'])
 exercise_names = df['Exercise'].unique()
 
 exercise = st.selectbox("Pick an exercise", exercise_names)
+days = st.select_slider("Time range (days)", [7, 30, 90, 365, 'All-Time'])
 
-exercise_rows = df[(df['Exercise'] == exercise)]
+if days == 'All-Time':
+    exercise_rows = df[df['Exercise'] == exercise]
+else:
+    date_cutoff = pd.Timestamp.today().normalize() - pd.Timedelta(days=days)
+    exercise_rows = df[(df['Exercise'] == exercise) & (df['Date'] >= date_cutoff)]
+
 daily_best = exercise_rows.groupby('Date')['Weight'].max()
 
-st.line_chart(daily_best)
+if exercise_rows.empty:
+    st.info("No sets logged in this time range")
+else:
+    st.line_chart(daily_best)
 
